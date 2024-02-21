@@ -9,6 +9,7 @@ import (
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/service"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
@@ -22,6 +23,8 @@ func main() {
 	weatherHandler := handler.NewWeatherHandler(weatherService)
 
 	router := chi.NewRouter()
+	router.Use(middleware.Logger)
+
 	router.Get("/", weatherHandler.GetWeatherByCEP)
 
 	log.Printf("server started on port 8080")
