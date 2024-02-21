@@ -32,7 +32,7 @@ func NewWeatherService(
 }
 
 func (s *weatherService) GetWeatherByCEP(cep string) (*model.Temperature, error) {
-	address, err := s.addressRepository.GetEndereco(cep)
+	address, err := s.addressRepository.GetAddress(cep)
 	if err != nil {
 		return nil, err
 	}

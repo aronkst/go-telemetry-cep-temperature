@@ -24,8 +24,8 @@ func NewCoordinatesRepository(url string) CoordinatesRepository {
 	}
 }
 
-func (repository *coordinatesRepository) GetCoordinates(address *model.Address) (*model.Coordinates, error) {
-	baseURL := repository.URL
+func (r *coordinatesRepository) GetCoordinates(address *model.Address) (*model.Coordinates, error) {
+	baseURL := r.URL
 
 	params := url.Values{}
 	params.Add("city", address.City)

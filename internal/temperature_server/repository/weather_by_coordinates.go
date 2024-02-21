@@ -23,13 +23,13 @@ func NewWeatherByCoordinatesRepository(url string) WeatherByCoordinatesRepositor
 	}
 }
 
-func (repository *weatherByCoordinatesRepository) GetWeather(coordinates *model.Coordinates) (*model.Weather, error) {
+func (r *weatherByCoordinatesRepository) GetWeather(coordinates *model.Coordinates) (*model.Weather, error) {
 	var url string
 
 	if os.Getenv("TEST") == "true" {
-		url = repository.URL
+		url = r.URL
 	} else {
-		url = fmt.Sprintf(repository.URL, coordinates.Latitude, coordinates.Longitude)
+		url = fmt.Sprintf(r.URL, coordinates.Latitude, coordinates.Longitude)
 	}
 
 	resp, err := http.Get(url)

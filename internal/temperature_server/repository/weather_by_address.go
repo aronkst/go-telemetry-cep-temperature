@@ -24,13 +24,13 @@ func NewWeatherByAddressRepository(url string) WeatherByAddressRepository {
 	}
 }
 
-func (repository *weatherByAddressRepository) GetWeather(address *model.Address) (*model.Weather, error) {
+func (r *weatherByAddressRepository) GetWeather(address *model.Address) (*model.Weather, error) {
 	var url string
 
 	if os.Getenv("TEST") == "true" {
-		url = repository.URL
+		url = r.URL
 	} else {
-		url = fmt.Sprintf(repository.URL, utils.CleanString(address.City), utils.CleanString(address.State))
+		url = fmt.Sprintf(r.URL, utils.CleanString(address.City), utils.CleanString(address.State))
 	}
 
 	resp, err := http.Get(url)

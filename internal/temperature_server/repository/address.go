@@ -11,7 +11,7 @@ import (
 )
 
 type AddressRepository interface {
-	GetEndereco(cep string) (*model.Address, error)
+	GetAddress(cep string) (*model.Address, error)
 }
 
 type addressRepository struct {
@@ -24,7 +24,7 @@ func NewAddressRepository(url string) AddressRepository {
 	}
 }
 
-func (repository *addressRepository) GetEndereco(cep string) (*model.Address, error) {
+func (r *addressRepository) GetAddress(cep string) (*model.Address, error) {
 	if cep == "" || len(cep) != 8 || !utils.IsNumber(cep) {
 		return nil, fmt.Errorf("invalid zipcode")
 	}
@@ -32,9 +32,9 @@ func (repository *addressRepository) GetEndereco(cep string) (*model.Address, er
 	var url string
 
 	if os.Getenv("TEST") == "true" {
-		url = repository.URL
+		url = r.URL
 	} else {
-		url = fmt.Sprintf(repository.URL, cep)
+		url = fmt.Sprintf(r.URL, cep)
 	}
 
 	resp, err := http.Get(url)

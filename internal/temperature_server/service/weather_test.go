@@ -14,7 +14,7 @@ type MockAddressRepository struct {
 	Err     error
 }
 
-func (m *MockAddressRepository) GetEndereco(cep string) (*model.Address, error) {
+func (m *MockAddressRepository) GetAddress(cep string) (*model.Address, error) {
 	return m.Address, m.Err
 }
 
