@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -16,7 +17,7 @@ type MockWeatherService struct {
 	Err         error
 }
 
-func (m *MockWeatherService) GetWeatherByCEP(cep string) (*model.Temperature, error) {
+func (m *MockWeatherService) GetWeatherByCEP(string, context.Context) (*model.Temperature, error) {
 	return m.Temperature, m.Err
 }
 

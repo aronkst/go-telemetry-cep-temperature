@@ -1,16 +1,18 @@
 package repository
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/model"
+	"go.opentelemetry.io/otel"
 )
 
 type CoordinatesRepository interface {
-	GetCoordinates(address *model.Address) (*model.Coordinates, error)
+	GetCoordinates(*model.Address, context.Context) (*model.Coordinates, error)
 }
 
 type coordinatesRepository struct {
@@ -24,7 +26,12 @@ func NewCoordinatesRepository(url string) CoordinatesRepository {
 	}
 }
 
-func (r *coordinatesRepository) GetCoordinates(address *model.Address) (*model.Coordinates, error) {
+func (r *coordinatesRepository) GetCoordinates(address *model.Address, ctx context.Context) (*model.Coordinates, error) {
+	tracer := otel.Tracer("Repository")
+
+	_, span := tracer.Start(ctx, "CoordinatesRepository.GetCoordinates")
+	defer span.End()
+
 	baseURL := r.URL
 
 	params := url.Values{}

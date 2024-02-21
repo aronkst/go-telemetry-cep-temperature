@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"testing"
@@ -14,7 +15,7 @@ type MockAddressRepository struct {
 	Err     error
 }
 
-func (m *MockAddressRepository) GetAddress(cep string) (*model.Address, error) {
+func (m *MockAddressRepository) GetAddress(string, context.Context) (*model.Address, error) {
 	return m.Address, m.Err
 }
 
@@ -23,7 +24,7 @@ type MockCoordinatesRepository struct {
 	Err         error
 }
 
-func (m *MockCoordinatesRepository) GetCoordinates(address *model.Address) (*model.Coordinates, error) {
+func (m *MockCoordinatesRepository) GetCoordinates(*model.Address, context.Context) (*model.Coordinates, error) {
 	return m.Coordinates, m.Err
 }
 
@@ -32,7 +33,7 @@ type MockWeatherByAddressRepository struct {
 	Err     error
 }
 
-func (m *MockWeatherByAddressRepository) GetWeather(address *model.Address) (*model.Weather, error) {
+func (m *MockWeatherByAddressRepository) GetWeather(*model.Address, context.Context) (*model.Weather, error) {
 	return m.Weather, m.Err
 }
 
@@ -41,7 +42,7 @@ type MockWeatherByCoordinatesRepository struct {
 	Err     error
 }
 
-func (m *MockWeatherByCoordinatesRepository) GetWeather(coordinates *model.Coordinates) (*model.Weather, error) {
+func (m *MockWeatherByCoordinatesRepository) GetWeather(*model.Coordinates, context.Context) (*model.Weather, error) {
 	return m.Weather, m.Err
 }
 
@@ -53,7 +54,7 @@ func TestWeatherService_Success(t *testing.T) {
 
 	service := service.NewWeatherService(mockAddressRepo, mockCoordinatesRepo, mockWeatherByAddressRepo, mockWeatherByCoordinatesRepo)
 
-	temperature, err := service.GetWeatherByCEP("12345678")
+	temperature, err := service.GetWeatherByCEP("12345678", context.Background())
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -92,7 +93,7 @@ func TestWeatherService_AddressNotFound(t *testing.T) {
 
 	service := service.NewWeatherService(mockAddressRepo, mockCoordinatesRepo, mockWeatherByAddressRepo, mockWeatherByCoordinatesRepo)
 
-	_, err := service.GetWeatherByCEP("12345678")
+	_, err := service.GetWeatherByCEP("12345678", context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -112,7 +113,7 @@ func TestWeatherService_ErrorWhenCoordinates(t *testing.T) {
 
 	service := service.NewWeatherService(mockAddressRepo, mockCoordinatesRepo, mockWeatherByAddressRepo, mockWeatherByCoordinatesRepo)
 
-	_, err := service.GetWeatherByCEP("12345678")
+	_, err := service.GetWeatherByCEP("12345678", context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -132,7 +133,7 @@ func TestWeatherService_ErrorWhenNotCoordinates(t *testing.T) {
 
 	service := service.NewWeatherService(mockAddressRepo, mockCoordinatesRepo, mockWeatherByAddressRepo, mockWeatherByCoordinatesRepo)
 
-	_, err := service.GetWeatherByCEP("12345678")
+	_, err := service.GetWeatherByCEP("12345678", context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}

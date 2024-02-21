@@ -1,6 +1,7 @@
 package repository_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -22,7 +23,7 @@ func TestAddressRepository_Success(t *testing.T) {
 
 	repo := repository.NewAddressRepository(server.URL)
 
-	address, err := repo.GetAddress("12345678")
+	address, err := repo.GetAddress("12345678", context.Background())
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -74,7 +75,7 @@ func TestAddressRepository_InvalidCep(t *testing.T) {
 
 	cep := "0"
 
-	_, err := repo.GetAddress(cep)
+	_, err := repo.GetAddress(cep, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -98,7 +99,7 @@ func TestAddressRepository_NotFindZipcode(t *testing.T) {
 
 	cep := "99999999"
 
-	_, err := repo.GetAddress(cep)
+	_, err := repo.GetAddress(cep, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -121,7 +122,7 @@ func TestAddressRepository_ErrorHttp(t *testing.T) {
 
 	cep := "12345678"
 
-	_, err := repo.GetAddress(cep)
+	_, err := repo.GetAddress(cep, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -146,7 +147,7 @@ func TestAddressRepository_NotStatusOK(t *testing.T) {
 
 	cep := "12345678"
 
-	_, err := repo.GetAddress(cep)
+	_, err := repo.GetAddress(cep, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -170,7 +171,7 @@ func TestAddressRepository_ErrorJsonDecoder(t *testing.T) {
 
 	cep := "12345678"
 
-	_, err := repo.GetAddress(cep)
+	_, err := repo.GetAddress(cep, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}

@@ -1,6 +1,7 @@
 package repository_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -31,7 +32,7 @@ func TestWeatherByAddressRepository_Success(t *testing.T) {
 		State:      "Estado",
 	}
 
-	temperature, err := repo.GetWeather(address)
+	temperature, err := repo.GetWeather(address, context.Background())
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -64,7 +65,7 @@ func TestWeatherByAddressRepository_ErrorHttp(t *testing.T) {
 		State:      "Estado",
 	}
 
-	_, err := repo.GetWeather(address)
+	_, err := repo.GetWeather(address, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -96,7 +97,7 @@ func TestWeatherByAddressRepository_NotStatusOK(t *testing.T) {
 		State:      "Estado",
 	}
 
-	_, err := repo.GetWeather(address)
+	_, err := repo.GetWeather(address, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -127,7 +128,7 @@ func TestWeatherByAddressRepository_ErrorJsonDecoder(t *testing.T) {
 		State:      "Estado",
 	}
 
-	_, err := repo.GetWeather(address)
+	_, err := repo.GetWeather(address, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -158,7 +159,7 @@ func TestWeatherByAddressRepository_JsonBlank(t *testing.T) {
 		State:      "Estado",
 	}
 
-	_, err := repo.GetWeather(address)
+	_, err := repo.GetWeather(address, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
