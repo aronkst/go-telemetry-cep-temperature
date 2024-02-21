@@ -23,7 +23,7 @@ func (h *InputHandler) GetTemperatureByCep(w http.ResponseWriter, r *http.Reques
 
 	err := json.NewDecoder(r.Body).Decode(&zipcode)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "invalid body", http.StatusInternalServerError)
 		return
 	}
 
