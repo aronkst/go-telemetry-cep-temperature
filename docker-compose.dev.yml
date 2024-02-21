@@ -2,7 +2,9 @@ version: "3"
 
 services:
   dev-go-telemetry-cep-temperature:
-    build: .
+    build:
+      context: .
+      dockerfile: dockerfile.dev
     volumes:
       - .:/home/app
     ports:
