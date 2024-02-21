@@ -6,6 +6,7 @@ import (
 
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/input_server/model"
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/input_server/service"
+	"go.opentelemetry.io/otel"
 )
 
 type InputHandler struct {
@@ -19,6 +20,11 @@ func NewInputHandler(inputService service.InputService) *InputHandler {
 }
 
 func (h *InputHandler) GetTemperatureByCep(w http.ResponseWriter, r *http.Request) {
+	tracer := otel.Tracer("Handler")
+
+	ctx, span := tracer.Start(r.Context(), "InputHandler.GetTemperatureByCep")
+	defer span.End()
+
 	var zipcode model.Zipcode
 
 	err := json.NewDecoder(r.Body).Decode(&zipcode)
@@ -27,7 +33,7 @@ func (h *InputHandler) GetTemperatureByCep(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	temperature, err := h.inputService.GetTemperatureByCep(&zipcode)
+	temperature, err := h.inputService.GetTemperatureByCep(&zipcode, ctx)
 	if err != nil {
 		var errorStatusCode int
 

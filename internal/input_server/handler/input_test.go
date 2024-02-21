@@ -2,6 +2,7 @@ package handler_test
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -18,7 +19,7 @@ type MockInputService struct {
 	Err         error
 }
 
-func (m *MockInputService) GetTemperatureByCep(*model.Zipcode) (*temperatureServerModel.Temperature, error) {
+func (m *MockInputService) GetTemperatureByCep(*model.Zipcode, context.Context) (*temperatureServerModel.Temperature, error) {
 	return m.Temperature, m.Err
 }
 

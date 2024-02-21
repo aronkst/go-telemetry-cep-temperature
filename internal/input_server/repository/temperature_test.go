@@ -1,6 +1,7 @@
 package repository_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -27,7 +28,7 @@ func TestTemperatureRepository_Success(t *testing.T) {
 		Cep: "12345678",
 	}
 
-	address, err := repo.GetTemperature(zipcode)
+	address, err := repo.GetTemperature(zipcode, context.Background())
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -71,7 +72,7 @@ func TestTemperatureRepository_InvalidCep(t *testing.T) {
 		Cep: "0",
 	}
 
-	_, err := repo.GetTemperature(zipcode)
+	_, err := repo.GetTemperature(zipcode, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -96,7 +97,7 @@ func TestTemperatureRepository_ErrorHttp(t *testing.T) {
 		Cep: "12345678",
 	}
 
-	_, err := repo.GetTemperature(zipcode)
+	_, err := repo.GetTemperature(zipcode, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -121,7 +122,7 @@ func TestTemperatureRepository_NotFindZipcode(t *testing.T) {
 		Cep: "12345678",
 	}
 
-	_, err := repo.GetTemperature(zipcode)
+	_, err := repo.GetTemperature(zipcode, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -148,7 +149,7 @@ func TestTemperatureRepository_NotStatusOK(t *testing.T) {
 		Cep: "12345678",
 	}
 
-	_, err := repo.GetTemperature(zipcode)
+	_, err := repo.GetTemperature(zipcode, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -174,7 +175,7 @@ func TestTemperatureRepository_ErrorJsonDecoder(t *testing.T) {
 		Cep: "12345678",
 	}
 
-	_, err := repo.GetTemperature(zipcode)
+	_, err := repo.GetTemperature(zipcode, context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}

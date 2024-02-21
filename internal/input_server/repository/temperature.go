@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,10 +10,11 @@ import (
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/input_server/model"
 	temperatureServerModel "github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/model"
 	"github.com/aronkst/go-telemetry-cep-temperature/pkg/utils"
+	"go.opentelemetry.io/otel"
 )
 
 type TemperatureRepository interface {
-	GetTemperature(*model.Zipcode) (*temperatureServerModel.Temperature, error)
+	GetTemperature(*model.Zipcode, context.Context) (*temperatureServerModel.Temperature, error)
 }
 
 type temperatureRepository struct {
@@ -25,7 +27,12 @@ func NewTemperatureRepository(url string) TemperatureRepository {
 	}
 }
 
-func (r *temperatureRepository) GetTemperature(zipcode *model.Zipcode) (*temperatureServerModel.Temperature, error) {
+func (r *temperatureRepository) GetTemperature(zipcode *model.Zipcode, ctx context.Context) (*temperatureServerModel.Temperature, error) {
+	tracer := otel.Tracer("Repository")
+
+	_, span := tracer.Start(ctx, "TemperatureRepository.GetTemperature")
+	defer span.End()
+
 	cep := zipcode.Cep
 	if cep == "" || len(cep) != 8 || !utils.IsNumber(cep) {
 		return nil, fmt.Errorf("invalid zipcode")
