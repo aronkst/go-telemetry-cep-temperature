@@ -65,6 +65,10 @@ func TestWeatherService_Success(t *testing.T) {
 		Kelvin:     303.15,
 	}
 
+	if temperature.City != expected.City {
+		t.Errorf("Expected City %v, got %v", expected.City, temperature.City)
+	}
+
 	if temperature.Celsius != expected.Celsius {
 		t.Errorf("Expected Celsius %v, got %v", expected.Celsius, temperature.Celsius)
 	}
