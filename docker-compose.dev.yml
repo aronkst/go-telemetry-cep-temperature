@@ -9,3 +9,10 @@ services:
       - .:/home/app
     ports:
       - "8080:8080"
+      - "3000:3000"
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+
