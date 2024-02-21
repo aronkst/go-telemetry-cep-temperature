@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  go-cep-temperature:
+    build:
+      context: .
+      dockerfile: dockerfile.prod
+    ports:
+      - "8080:8080"

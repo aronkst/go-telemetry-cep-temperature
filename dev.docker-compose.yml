@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  dev-go-telemetry-cep-temperature:
+    build: .
+    volumes:
+      - .:/home/app
+    ports:
+      - "8080:8080"
