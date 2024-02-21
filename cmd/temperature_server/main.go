@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/handler"
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/repository"
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/service"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/handler"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/repository"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/service"
 
 	"github.com/go-chi/chi/v5"
 )

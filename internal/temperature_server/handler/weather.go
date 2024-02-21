@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/service"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/service"
 )
 
 type WeatherHandler struct {

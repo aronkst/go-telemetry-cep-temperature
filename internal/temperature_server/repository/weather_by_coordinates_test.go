@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/model"
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/repository"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/model"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/repository"
 )
 
 func TestWeatherByCoordinatesRepository_Success(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/model"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/model"
 )
 
 type WeatherByCoordinatesRepository interface {

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/model"
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/service"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/model"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/service"
 )
 
 type MockAddressRepository struct {
@@ -59,6 +59,7 @@ func TestWeatherService_Success(t *testing.T) {
 	}
 
 	expected := &model.Temperature{
+		City:       "Cidade",
 		Celsius:    30.0,
 		Fahrenheit: 86.0,
 		Kelvin:     303.15,

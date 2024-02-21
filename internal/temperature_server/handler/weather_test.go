@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/handler"
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/model"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/handler"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/model"
 )
 
 type MockWeatherService struct {
@@ -22,7 +22,7 @@ func (m *MockWeatherService) GetWeatherByCEP(cep string) (*model.Temperature, er
 
 func TestGetWeatherByCEP_ValidCEP(t *testing.T) {
 	mockService := &MockWeatherService{
-		Temperature: &model.Temperature{Celsius: 30, Fahrenheit: 86, Kelvin: 303.15},
+		Temperature: &model.Temperature{City: "Cidade", Celsius: 30, Fahrenheit: 86, Kelvin: 303.15},
 		Err:         nil,
 	}
 
@@ -40,7 +40,7 @@ func TestGetWeatherByCEP_ValidCEP(t *testing.T) {
 		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
 	}
 
-	expected := `{"temp_C":30,"temp_F":86,"temp_K":303.15}`
+	expected := `{"city":"Cidade","temp_C":30,"temp_F":86,"temp_K":303.15}`
 	if strings.Trim(responseRecorder.Body.String(), "\n") != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v", responseRecorder.Body.String(), expected)
 	}

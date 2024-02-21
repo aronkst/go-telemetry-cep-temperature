@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/model"
-	"github.com/aronkst/go-telemetry-cep-temperature/internal/repository"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/model"
+	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/repository"
 	"github.com/aronkst/go-telemetry-cep-temperature/pkg/utils"
 )
 
@@ -53,6 +53,7 @@ func (s *weatherService) GetWeatherByCEP(cep string) (*model.Temperature, error)
 	}
 
 	temperature := &model.Temperature{
+		City:       address.City,
 		Celsius:    weather.Temperature,
 		Fahrenheit: utils.CelsiusToFahrenheit(weather.Temperature),
 		Kelvin:     utils.CelsiusToKelvin(weather.Temperature),
