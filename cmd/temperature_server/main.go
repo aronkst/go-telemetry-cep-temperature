@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/handler"
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/repository"
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/service"
+	"github.com/aronkst/go-telemetry-cep-temperature/pkg/utils"
+
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/zipkin"
@@ -46,7 +49,10 @@ func main() {
 }
 
 func initTracer() func() {
-	exporter, err := zipkin.New("http://zipkin:9411/api/v2/spans")
+	zipkinENV := utils.GetEnvOrDefault("ZIPKIN_URL", "zipkin")
+	zipkinURL := fmt.Sprintf("http://%s:9411/api/v2/spans", zipkinENV)
+
+	exporter, err := zipkin.New(zipkinURL)
 	if err != nil {
 		log.Fatal("failed to create Zipkin exporter: ", err)
 	}

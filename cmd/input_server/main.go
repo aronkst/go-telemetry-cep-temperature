@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/input_server/handler"
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/input_server/repository"
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/input_server/service"
+	"github.com/aronkst/go-telemetry-cep-temperature/pkg/utils"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -24,7 +26,10 @@ func main() {
 	cleanup := initTracer()
 	defer cleanup()
 
-	temperatureRepository := repository.NewTemperatureRepository("http://localhost:8080/?cep=%s")
+	serviceENV := utils.GetEnvOrDefault("SERVICE_URL", "localhost")
+	serviceURL := fmt.Sprintf("http://%s:8080", serviceENV)
+
+	temperatureRepository := repository.NewTemperatureRepository(serviceURL + "/?cep=%s")
 
 	inputService := service.NewInputService(temperatureRepository)
 
@@ -44,7 +49,10 @@ func main() {
 }
 
 func initTracer() func() {
-	exporter, err := zipkin.New("http://zipkin:9411/api/v2/spans")
+	zipkinENV := utils.GetEnvOrDefault("ZIPKIN_URL", "zipkin")
+	zipkinURL := fmt.Sprintf("http://%s:9411/api/v2/spans", zipkinENV)
+
+	exporter, err := zipkin.New(zipkinURL)
 	if err != nil {
 		log.Fatal("failed to create Zipkin exporter: ", err)
 	}
