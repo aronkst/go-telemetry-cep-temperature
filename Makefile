@@ -8,13 +8,13 @@ dev-down:
 	docker compose -f docker-compose.dev.yml down
 
 dev-run-service-a:
-	docker compose -f docker-compose.dev.yml exec dev-go-telemetry-cep-temperature go run cmd/input_server/main.go
+	docker compose -f docker-compose.dev.yml exec dev go run cmd/input_server/main.go
 
 dev-run-service-b:
-	docker compose -f docker-compose.dev.yml exec dev-go-telemetry-cep-temperature go run cmd/temperature_server/main.go
+	docker compose -f docker-compose.dev.yml exec dev go run cmd/temperature_server/main.go
 
 dev-run-tests:
-	docker compose -f docker-compose.dev.yml exec dev-go-telemetry-cep-temperature go test ./... -v
+	docker compose -f docker-compose.dev.yml exec dev go test ./... -v
 
 prod-start:
 	docker compose -f docker-compose.prod.yml up -d
