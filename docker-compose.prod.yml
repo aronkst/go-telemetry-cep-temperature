@@ -1,9 +1,32 @@
 version: "3"
 
 services:
-  go-cep-temperature:
+  service-a:
     build:
       context: .
-      dockerfile: dockerfile.prod
+      dockerfile: dockerfile.prod.input_server
+    ports:
+      - "3000:3000"
+    networks:
+      - service-network
+    environment:
+      - SERVICE_URL=service-b
+      - ZIPKIN_URL=zipkin
+  service-b:
+    build:
+      context: .
+      dockerfile: dockerfile.prod.temperature_server
     ports:
       - "8080:8080"
+    networks:
+      - service-network
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - service-network
+networks:
+  service-network:
+    driver: bridge

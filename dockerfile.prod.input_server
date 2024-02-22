@@ -2,54 +2,37 @@ FROM golang:1.22.0 AS builder
 
 WORKDIR /app
 
-RUN mkdir -p cmd/server
-RUN mkdir -p internal/handler
-RUN mkdir -p internal/model
-RUN mkdir -p internal/repository
-RUN mkdir -p internal/service
+RUN mkdir -p cmd/input_server
+RUN mkdir -p internal/input_server/handler
+RUN mkdir -p internal/input_server/model
+RUN mkdir -p internal/temperature_server/model
+RUN mkdir -p internal/input_server/repository
+RUN mkdir -p internal/input_server/service
 RUN mkdir -p pkg/utils
 
 COPY go.mod ./
 COPY go.sum ./
-COPY cmd/server/main.go ./cmd/server
 
-COPY internal/handler/weather_test.go ./internal/handler
-COPY internal/handler/weather.go ./internal/handler
-
-COPY internal/model/address.go ./internal/model
-COPY internal/model/coordinates.go ./internal/model
-COPY internal/model/temperature.go ./internal/model
-COPY internal/model/weather.go ./internal/model
-
-COPY internal/repository/address_test.go ./internal/repository
-COPY internal/repository/address.go ./internal/repository
-COPY internal/repository/coordinates_test.go ./internal/repository
-COPY internal/repository/coordinates.go ./internal/repository
-COPY internal/repository/weather_by_address_test.go ./internal/repository
-COPY internal/repository/weather_by_address.go ./internal/repository
-COPY internal/repository/weather_by_coordinates_test.go ./internal/repository
-COPY internal/repository/weather_by_coordinates.go ./internal/repository
-
-COPY internal/service/weather_test.go ./internal/service
-COPY internal/service/weather.go ./internal/service
-
-COPY pkg/utils/clean_string_test.go ./pkg/utils
+COPY cmd/input_server/main.go ./cmd/input_server
+COPY internal/input_server/handler/input.go ./internal/input_server/handler
+COPY internal/input_server/model/zipcode.go ./internal/input_server/model
+COPY internal/temperature_server/model/temperature.go ./internal/temperature_server/model
+COPY internal/input_server/repository/temperature.go ./internal/input_server/repository
+COPY internal/input_server/service/input.go ./internal/input_server/service
 COPY pkg/utils/clean_string.go ./pkg/utils
-COPY pkg/utils/is_number_test.go ./pkg/utils
 COPY pkg/utils/is_number.go ./pkg/utils
-COPY pkg/utils/number_converter_test.go ./pkg/utils
 COPY pkg/utils/number_converter.go ./pkg/utils
-COPY pkg/utils/temperature_converter_test.go ./pkg/utils
 COPY pkg/utils/temperature_converter.go ./pkg/utils
+COPY pkg/utils/env_var.go ./pkg/utils
 
 RUN go mod download
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o go-cep-temperature cmd/server/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o service-a cmd/input_server/main.go
 
 FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=builder /app/go-cep-temperature ./
+COPY --from=builder /app/service-a ./
 
-CMD ["./go-cep-temperature"]
+CMD ["./service-a"]

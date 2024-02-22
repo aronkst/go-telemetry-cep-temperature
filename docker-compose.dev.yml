@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  dev-go-telemetry-cep-temperature:
+  dev:
     build:
       context: .
       dockerfile: dockerfile.dev
