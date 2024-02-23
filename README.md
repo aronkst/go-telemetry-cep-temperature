@@ -17,10 +17,6 @@ Este projeto é uma solução integrada composta por dois serviços, Serviço A 
 - **Integração com OTEL + Zipkin para Tracing Distribuído**: A implementação do OpenTelemetry juntamente com o Zipkin proporciona um tracing distribuído eficaz entre o Serviço A e o Serviço B.
 - **Spans para Medir Tempos de Resposta**: São criados spans específicos para medir o tempo de resposta das operações de busca de CEP no Serviço A e de busca de informações climáticas no Serviço B.
 
----
-
-Altere o texto abaixo para simular os dois servicos. As respostas dos dois
-
 ## Exemplo de Uso
 
 Para consultar informações climáticas através da linha de comando, você pode usar o `curl`, uma ferramenta poderosa e disponível na maioria dos sistemas operacionais para fazer requisições HTTP. Abaixo estão exemplos práticos de como usar o curl para obter a temperatura com base em um CEP específico.
