@@ -10,7 +10,7 @@ import (
 )
 
 type InputService interface {
-	GetTemperatureByCep(*model.Zipcode, context.Context) (*temperatureServerModel.Temperature, error)
+	GetTemperatureByCep(*model.Zipcode, context.Context, context.Context) (*temperatureServerModel.Temperature, error)
 }
 
 type inputService struct {
@@ -25,13 +25,16 @@ func NewInputService(
 	}
 }
 
-func (s *inputService) GetTemperatureByCep(zipcode *model.Zipcode, ctx context.Context) (*temperatureServerModel.Temperature, error) {
+func (s *inputService) GetTemperatureByCep(zipcode *model.Zipcode, ctx context.Context, ctxDistributed context.Context) (*temperatureServerModel.Temperature, error) {
 	tracer := otel.Tracer("InputService")
 
 	ctx, span := tracer.Start(ctx, "InputService.GetTemperatureByCep")
 	defer span.End()
 
-	temperature, err := s.temperatureRepository.GetTemperature(zipcode, ctx)
+	ctxDistributed, spanDistributed := tracer.Start(ctxDistributed, "InputService.GetTemperatureByCep")
+	defer spanDistributed.End()
+
+	temperature, err := s.temperatureRepository.GetTemperature(zipcode, ctx, ctxDistributed)
 	if err != nil {
 		return nil, err
 	}

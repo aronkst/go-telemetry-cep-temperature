@@ -12,7 +12,7 @@ import (
 )
 
 type CoordinatesRepository interface {
-	GetCoordinates(*model.Address, context.Context) (*model.Coordinates, error)
+	GetCoordinates(*model.Address, context.Context, context.Context) (*model.Coordinates, error)
 }
 
 type coordinatesRepository struct {
@@ -26,11 +26,14 @@ func NewCoordinatesRepository(url string) CoordinatesRepository {
 	}
 }
 
-func (r *coordinatesRepository) GetCoordinates(address *model.Address, ctx context.Context) (*model.Coordinates, error) {
+func (r *coordinatesRepository) GetCoordinates(address *model.Address, ctx context.Context, ctxDistributed context.Context) (*model.Coordinates, error) {
 	tracer := otel.Tracer("CoordinatesRepository")
 
 	_, span := tracer.Start(ctx, "CoordinatesRepository.GetCoordinates")
 	defer span.End()
+
+	_, spanDistributed := tracer.Start(ctxDistributed, "CoordinatesRepository.GetCoordinates")
+	defer spanDistributed.End()
 
 	baseURL := r.URL
 

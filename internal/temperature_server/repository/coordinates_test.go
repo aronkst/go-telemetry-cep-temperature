@@ -30,7 +30,7 @@ func TestCoordinatesRepository_Success(t *testing.T) {
 		State:      "Estado",
 	}
 
-	coordinates, err := repo.GetCoordinates(address, context.Background())
+	coordinates, err := repo.GetCoordinates(address, context.Background(), context.Background())
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -66,7 +66,7 @@ func TestCoordinatesRepository_ErrorHttp(t *testing.T) {
 		State:      "Estado",
 	}
 
-	_, err := repo.GetCoordinates(address, context.Background())
+	_, err := repo.GetCoordinates(address, context.Background(), context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -96,7 +96,7 @@ func TestCoordinatesRepository_NotStatusOK(t *testing.T) {
 		State:      "Estado",
 	}
 
-	_, err := repo.GetCoordinates(address, context.Background())
+	_, err := repo.GetCoordinates(address, context.Background(), context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -125,7 +125,7 @@ func TestCoordinatesRepository_ErrorJsonDecoder(t *testing.T) {
 		State:      "Estado",
 	}
 
-	_, err := repo.GetCoordinates(address, context.Background())
+	_, err := repo.GetCoordinates(address, context.Background(), context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}
@@ -154,7 +154,7 @@ func TestCoordinatesRepository_JsonBlank(t *testing.T) {
 		State:      "Estado",
 	}
 
-	_, err := repo.GetCoordinates(address, context.Background())
+	_, err := repo.GetCoordinates(address, context.Background(), context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}

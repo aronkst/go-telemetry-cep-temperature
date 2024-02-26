@@ -17,7 +17,7 @@ type MockWeatherService struct {
 	Err         error
 }
 
-func (m *MockWeatherService) GetWeatherByCEP(string, context.Context) (*model.Temperature, error) {
+func (m *MockWeatherService) GetWeatherByCEP(string, context.Context, context.Context) (*model.Temperature, error) {
 	return m.Temperature, m.Err
 }
 

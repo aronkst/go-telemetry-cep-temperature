@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -22,8 +23,23 @@ func NewInputHandler(inputService service.InputService) *InputHandler {
 func (h *InputHandler) GetTemperatureByCep(w http.ResponseWriter, r *http.Request) {
 	tracer := otel.Tracer("InputHandler")
 
-	ctx, span := tracer.Start(r.Context(), "InputHandler.GetTemperatureByCep")
+	ctx := r.Context()
+	ctxDistributed := context.Background()
+
+	ctx, spanRoute := tracer.Start(ctx, "POST /")
+	defer spanRoute.End()
+
+	ctx, span := tracer.Start(ctx, "InputHandler.GetTemperatureByCep")
 	defer span.End()
+
+	ctxDistributed, spanDistributedStart := tracer.Start(ctxDistributed, "Distributed")
+	defer spanDistributedStart.End()
+
+	ctxDistributed, spanDistributedStartRoute := tracer.Start(ctxDistributed, "POST /")
+	defer spanDistributedStartRoute.End()
+
+	ctxDistributed, spanDistributed := tracer.Start(ctxDistributed, "InputHandler.GetTemperatureByCep")
+	defer spanDistributed.End()
 
 	var zipcode model.Zipcode
 
@@ -33,7 +49,7 @@ func (h *InputHandler) GetTemperatureByCep(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	temperature, err := h.inputService.GetTemperatureByCep(&zipcode, ctx)
+	temperature, err := h.inputService.GetTemperatureByCep(&zipcode, ctx, ctxDistributed)
 	if err != nil {
 		var errorStatusCode int
 

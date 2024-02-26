@@ -20,16 +20,26 @@ func NewWeatherHandler(weatherService service.WeatherService) *WeatherHandler {
 }
 
 func (h *WeatherHandler) GetWeatherByCEP(w http.ResponseWriter, r *http.Request) {
-	ctx := otel.GetTextMapPropagator().Extract(r.Context(), propagation.HeaderCarrier(r.Header))
-
 	tracer := otel.Tracer("WeatherHandler")
 
-	_, span := tracer.Start(ctx, "WeatherHandler.GetWeatherByCEP")
+	ctx := r.Context()
+	ctxDistributed := otel.GetTextMapPropagator().Extract(ctx, propagation.HeaderCarrier(r.Header))
+
+	ctx, spanRoute := tracer.Start(ctx, "GET /")
+	defer spanRoute.End()
+
+	ctx, span := tracer.Start(ctx, "WeatherHandler.GetWeatherByCEP")
 	defer span.End()
+
+	ctxDistributed, spanDistributedRoute := tracer.Start(ctxDistributed, "GET /")
+	defer spanDistributedRoute.End()
+
+	ctxDistributed, spanDistributed := tracer.Start(ctxDistributed, "WeatherHandler.GetWeatherByCEP")
+	defer spanDistributed.End()
 
 	cep := r.URL.Query().Get("cep")
 
-	temperature, err := h.weatherService.GetWeatherByCEP(cep, ctx)
+	temperature, err := h.weatherService.GetWeatherByCEP(cep, ctx, ctxDistributed)
 	if err != nil {
 		var errorStatusCode int
 

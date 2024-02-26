@@ -14,7 +14,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/zipkin"
 	"go.opentelemetry.io/otel/propagation"
@@ -39,7 +38,7 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 
-	router.Post("/", otelhttp.NewHandler(http.HandlerFunc(inputHandler.GetTemperatureByCep), "POST /").ServeHTTP)
+	router.Post("/", inputHandler.GetTemperatureByCep)
 
 	log.Printf("server started on port 3000")
 

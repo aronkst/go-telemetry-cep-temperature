@@ -15,7 +15,7 @@ import (
 )
 
 type TemperatureRepository interface {
-	GetTemperature(*model.Zipcode, context.Context) (*temperatureServerModel.Temperature, error)
+	GetTemperature(*model.Zipcode, context.Context, context.Context) (*temperatureServerModel.Temperature, error)
 }
 
 type temperatureRepository struct {
@@ -28,11 +28,14 @@ func NewTemperatureRepository(url string) TemperatureRepository {
 	}
 }
 
-func (r *temperatureRepository) GetTemperature(zipcode *model.Zipcode, ctx context.Context) (*temperatureServerModel.Temperature, error) {
+func (r *temperatureRepository) GetTemperature(zipcode *model.Zipcode, ctx context.Context, ctxDistributed context.Context) (*temperatureServerModel.Temperature, error) {
 	tracer := otel.Tracer("TemperatureRepository")
 
 	_, span := tracer.Start(ctx, "TemperatureRepository.GetTemperature")
 	defer span.End()
+
+	ctxDistributed, spanDistributed := tracer.Start(ctxDistributed, "TemperatureRepository.GetTemperature")
+	defer spanDistributed.End()
 
 	cep := zipcode.Cep
 	if cep == "" || len(cep) != 8 || !utils.IsNumber(cep) {
@@ -50,7 +53,7 @@ func (r *temperatureRepository) GetTemperature(zipcode *model.Zipcode, ctx conte
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
 
-	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(req.Header))
+	otel.GetTextMapPropagator().Inject(ctxDistributed, propagation.HeaderCarrier(req.Header))
 
 	resp, err := client.Do(req)
 	if err != nil {

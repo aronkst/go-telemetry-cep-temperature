@@ -19,7 +19,7 @@ type MockInputService struct {
 	Err         error
 }
 
-func (m *MockInputService) GetTemperatureByCep(*model.Zipcode, context.Context) (*temperatureServerModel.Temperature, error) {
+func (m *MockInputService) GetTemperatureByCep(*model.Zipcode, context.Context, context.Context) (*temperatureServerModel.Temperature, error) {
 	return m.Temperature, m.Err
 }
 

@@ -12,7 +12,7 @@ import (
 )
 
 type WeatherByCoordinatesRepository interface {
-	GetWeather(*model.Coordinates, context.Context) (*model.Weather, error)
+	GetWeather(*model.Coordinates, context.Context, context.Context) (*model.Weather, error)
 }
 
 type weatherByCoordinatesRepository struct {
@@ -25,11 +25,14 @@ func NewWeatherByCoordinatesRepository(url string) WeatherByCoordinatesRepositor
 	}
 }
 
-func (r *weatherByCoordinatesRepository) GetWeather(coordinates *model.Coordinates, ctx context.Context) (*model.Weather, error) {
+func (r *weatherByCoordinatesRepository) GetWeather(coordinates *model.Coordinates, ctx context.Context, ctxDistributed context.Context) (*model.Weather, error) {
 	tracer := otel.Tracer("WeatherByCoordinatesRepository")
 
 	_, span := tracer.Start(ctx, "WeatherByCoordinatesRepository.GetWeather")
 	defer span.End()
+
+	_, spanDistributed := tracer.Start(ctxDistributed, "WeatherByCoordinatesRepository.GetWeather")
+	defer spanDistributed.End()
 
 	var url string
 

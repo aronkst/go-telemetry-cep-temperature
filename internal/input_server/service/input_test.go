@@ -16,7 +16,7 @@ type MockTemperatureRepository struct {
 	Err         error
 }
 
-func (m *MockTemperatureRepository) GetTemperature(*model.Zipcode, context.Context) (*temperatureServerModel.Temperature, error) {
+func (m *MockTemperatureRepository) GetTemperature(*model.Zipcode, context.Context, context.Context) (*temperatureServerModel.Temperature, error) {
 	return m.Temperature, m.Err
 }
 
@@ -29,7 +29,7 @@ func TestInputService_Success(t *testing.T) {
 		Cep: "12345678",
 	}
 
-	temperature, err := service.GetTemperatureByCep(zipcode, context.Background())
+	temperature, err := service.GetTemperatureByCep(zipcode, context.Background(), context.Background())
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -69,7 +69,7 @@ func TestInputService_Error(t *testing.T) {
 		Cep: "0",
 	}
 
-	_, err := service.GetTemperatureByCep(zipcode, context.Background())
+	_, err := service.GetTemperatureByCep(zipcode, context.Background(), context.Background())
 	if err == nil {
 		t.Fatalf("Expected an error but got nil")
 	}

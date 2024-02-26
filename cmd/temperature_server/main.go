@@ -11,7 +11,6 @@ import (
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/service"
 	"github.com/aronkst/go-telemetry-cep-temperature/pkg/utils"
 
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/zipkin"
 	"go.opentelemetry.io/otel/propagation"
@@ -39,7 +38,7 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 
-	router.Get("/", otelhttp.NewHandler(http.HandlerFunc(weatherHandler.GetWeatherByCEP), "GET /").ServeHTTP)
+	router.Get("/", weatherHandler.GetWeatherByCEP)
 
 	log.Printf("server started on port 8080")
 

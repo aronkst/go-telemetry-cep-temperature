@@ -10,7 +10,7 @@ import (
 )
 
 type WeatherService interface {
-	GetWeatherByCEP(string, context.Context) (*model.Temperature, error)
+	GetWeatherByCEP(string, context.Context, context.Context) (*model.Temperature, error)
 }
 
 type weatherService struct {
@@ -34,27 +34,30 @@ func NewWeatherService(
 	}
 }
 
-func (s *weatherService) GetWeatherByCEP(cep string, ctx context.Context) (*model.Temperature, error) {
+func (s *weatherService) GetWeatherByCEP(cep string, ctx context.Context, ctxDistributed context.Context) (*model.Temperature, error) {
 	tracer := otel.Tracer("WeatherService")
 
-	_, span := tracer.Start(ctx, "WeatherService.GetWeatherByCEP")
+	ctx, span := tracer.Start(ctx, "WeatherService.GetWeatherByCEP")
 	defer span.End()
 
-	address, err := s.addressRepository.GetAddress(cep, ctx)
+	ctxDistributed, spanDistributed := tracer.Start(ctxDistributed, "WeatherService.GetWeatherByCEP")
+	defer spanDistributed.End()
+
+	address, err := s.addressRepository.GetAddress(cep, ctx, ctxDistributed)
 	if err != nil {
 		return nil, err
 	}
 
 	var weather *model.Weather
 
-	coordinates, err := s.coordinatesRepository.GetCoordinates(address, ctx)
+	coordinates, err := s.coordinatesRepository.GetCoordinates(address, ctx, ctxDistributed)
 	if err == nil {
-		weather, err = s.weatherByCoordinatesRepository.GetWeather(coordinates, ctx)
+		weather, err = s.weatherByCoordinatesRepository.GetWeather(coordinates, ctx, ctxDistributed)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		weather, err = s.weatherByAddressRepository.GetWeather(address, ctx)
+		weather, err = s.weatherByAddressRepository.GetWeather(address, ctx, ctxDistributed)
 		if err != nil {
 			return nil, err
 		}

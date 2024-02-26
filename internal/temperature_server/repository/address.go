@@ -13,7 +13,7 @@ import (
 )
 
 type AddressRepository interface {
-	GetAddress(string, context.Context) (*model.Address, error)
+	GetAddress(string, context.Context, context.Context) (*model.Address, error)
 }
 
 type addressRepository struct {
@@ -26,11 +26,14 @@ func NewAddressRepository(url string) AddressRepository {
 	}
 }
 
-func (r *addressRepository) GetAddress(cep string, ctx context.Context) (*model.Address, error) {
+func (r *addressRepository) GetAddress(cep string, ctx context.Context, ctxDistributed context.Context) (*model.Address, error) {
 	tracer := otel.Tracer("AddressRepository")
 
 	_, span := tracer.Start(ctx, "AddressRepository.GetAddress")
 	defer span.End()
+
+	_, spanDistributed := tracer.Start(ctxDistributed, "AddressRepository.GetAddress")
+	defer spanDistributed.End()
 
 	if cep == "" || len(cep) != 8 || !utils.IsNumber(cep) {
 		return nil, fmt.Errorf("invalid zipcode")
