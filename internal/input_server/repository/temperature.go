@@ -11,6 +11,7 @@ import (
 	temperatureServerModel "github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/model"
 	"github.com/aronkst/go-telemetry-cep-temperature/pkg/utils"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 type TemperatureRepository interface {
@@ -28,7 +29,7 @@ func NewTemperatureRepository(url string) TemperatureRepository {
 }
 
 func (r *temperatureRepository) GetTemperature(zipcode *model.Zipcode, ctx context.Context) (*temperatureServerModel.Temperature, error) {
-	tracer := otel.Tracer("Repository")
+	tracer := otel.Tracer("TemperatureRepository")
 
 	_, span := tracer.Start(ctx, "TemperatureRepository.GetTemperature")
 	defer span.End()
@@ -46,7 +47,12 @@ func (r *temperatureRepository) GetTemperature(zipcode *model.Zipcode, ctx conte
 		url = fmt.Sprintf(r.URL, cep)
 	}
 
-	resp, err := http.Get(url)
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", url, nil)
+
+	otel.GetTextMapPropagator().Inject(ctx, propagation.HeaderCarrier(req.Header))
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error when searching for temperature by cep: %w", err)
 	}

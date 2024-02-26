@@ -27,7 +27,7 @@ func NewAddressRepository(url string) AddressRepository {
 }
 
 func (r *addressRepository) GetAddress(cep string, ctx context.Context) (*model.Address, error) {
-	tracer := otel.Tracer("Repository")
+	tracer := otel.Tracer("AddressRepository")
 
 	_, span := tracer.Start(ctx, "AddressRepository.GetAddress")
 	defer span.End()

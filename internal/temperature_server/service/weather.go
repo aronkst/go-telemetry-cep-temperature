@@ -35,9 +35,9 @@ func NewWeatherService(
 }
 
 func (s *weatherService) GetWeatherByCEP(cep string, ctx context.Context) (*model.Temperature, error) {
-	tracer := otel.Tracer("Service")
+	tracer := otel.Tracer("WeatherService")
 
-	ctx, span := tracer.Start(ctx, "WeatherService.GetWeatherByCEP")
+	_, span := tracer.Start(ctx, "WeatherService.GetWeatherByCEP")
 	defer span.End()
 
 	address, err := s.addressRepository.GetAddress(cep, ctx)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/aronkst/go-telemetry-cep-temperature/internal/temperature_server/service"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 )
 
 type WeatherHandler struct {
@@ -19,9 +20,11 @@ func NewWeatherHandler(weatherService service.WeatherService) *WeatherHandler {
 }
 
 func (h *WeatherHandler) GetWeatherByCEP(w http.ResponseWriter, r *http.Request) {
-	tracer := otel.Tracer("Handler")
+	ctx := otel.GetTextMapPropagator().Extract(r.Context(), propagation.HeaderCarrier(r.Header))
 
-	ctx, span := tracer.Start(r.Context(), "WeatherHandler.GetWeatherByCEP")
+	tracer := otel.Tracer("WeatherHandler")
+
+	_, span := tracer.Start(ctx, "WeatherHandler.GetWeatherByCEP")
 	defer span.End()
 
 	cep := r.URL.Query().Get("cep")

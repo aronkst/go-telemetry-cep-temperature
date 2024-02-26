@@ -26,7 +26,7 @@ func NewInputService(
 }
 
 func (s *inputService) GetTemperatureByCep(zipcode *model.Zipcode, ctx context.Context) (*temperatureServerModel.Temperature, error) {
-	tracer := otel.Tracer("Service")
+	tracer := otel.Tracer("InputService")
 
 	ctx, span := tracer.Start(ctx, "InputService.GetTemperatureByCep")
 	defer span.End()

@@ -20,7 +20,7 @@ func NewInputHandler(inputService service.InputService) *InputHandler {
 }
 
 func (h *InputHandler) GetTemperatureByCep(w http.ResponseWriter, r *http.Request) {
-	tracer := otel.Tracer("Handler")
+	tracer := otel.Tracer("InputHandler")
 
 	ctx, span := tracer.Start(r.Context(), "InputHandler.GetTemperatureByCep")
 	defer span.End()

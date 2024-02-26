@@ -27,7 +27,7 @@ func NewWeatherByAddressRepository(url string) WeatherByAddressRepository {
 }
 
 func (r *weatherByAddressRepository) GetWeather(address *model.Address, ctx context.Context) (*model.Weather, error) {
-	tracer := otel.Tracer("Repository")
+	tracer := otel.Tracer("WeatherByAddressRepository")
 
 	_, span := tracer.Start(ctx, "WeatherByAddressRepository.GetWeather")
 	defer span.End()

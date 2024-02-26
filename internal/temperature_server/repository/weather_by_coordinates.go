@@ -26,7 +26,7 @@ func NewWeatherByCoordinatesRepository(url string) WeatherByCoordinatesRepositor
 }
 
 func (r *weatherByCoordinatesRepository) GetWeather(coordinates *model.Coordinates, ctx context.Context) (*model.Weather, error) {
-	tracer := otel.Tracer("Repository")
+	tracer := otel.Tracer("WeatherByCoordinatesRepository")
 
 	_, span := tracer.Start(ctx, "WeatherByCoordinatesRepository.GetWeather")
 	defer span.End()

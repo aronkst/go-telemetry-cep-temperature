@@ -27,7 +27,7 @@ func NewCoordinatesRepository(url string) CoordinatesRepository {
 }
 
 func (r *coordinatesRepository) GetCoordinates(address *model.Address, ctx context.Context) (*model.Coordinates, error) {
-	tracer := otel.Tracer("Repository")
+	tracer := otel.Tracer("CoordinatesRepository")
 
 	_, span := tracer.Start(ctx, "CoordinatesRepository.GetCoordinates")
 	defer span.End()
