@@ -2,6 +2,7 @@ version: "3"
 
 services:
   dev:
+    container_name: dev
     build:
       context: .
       dockerfile: dockerfile.dev
@@ -15,4 +16,12 @@ services:
     container_name: zipkin
     ports:
       - "9411:9411"
-
+  collector:
+    image: otel/opentelemetry-collector
+    container_name: collector
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"
+      - "55681:55679"
+    command: ["--config=/etc/otel-collector-config.yaml"]

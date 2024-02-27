@@ -12,7 +12,7 @@ import (
 	"github.com/aronkst/go-telemetry-cep-temperature/pkg/utils"
 
 	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/exporters/zipkin"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
@@ -49,28 +49,35 @@ func main() {
 }
 
 func initTracer() func() {
-	zipkinENV := utils.GetEnvOrDefault("ZIPKIN_URL", "zipkin")
-	zipkinURL := fmt.Sprintf("http://%s:9411/api/v2/spans", zipkinENV)
+	collectorENV := utils.GetEnvOrDefault("COLLECTOR_URL", "collector")
+	collectorURL := fmt.Sprintf("%s:4317", collectorENV)
 
-	exporter, err := zipkin.New(zipkinURL)
+	ctx := context.Background()
+
+	exporter, err := otlptracegrpc.New(ctx,
+		otlptracegrpc.WithInsecure(),
+		otlptracegrpc.WithEndpoint(collectorURL),
+	)
 	if err != nil {
-		log.Fatal("failed to create Zipkin exporter: ", err)
+		log.Fatalf("failed to create OTLP gRPC trace exporter: %v", err)
 	}
+
+	resource := resource.NewWithAttributes(
+		semconv.SchemaURL,
+		semconv.ServiceNameKey.String("Service B"),
+	)
 
 	tracerProvider := trace.NewTracerProvider(
 		trace.WithBatcher(exporter),
-		trace.WithResource(resource.NewWithAttributes(
-			semconv.SchemaURL,
-			semconv.ServiceNameKey.String("Service B"),
-		)),
+		trace.WithResource(resource),
 	)
 
 	otel.SetTracerProvider(tracerProvider)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
 	return func() {
-		if err := tracerProvider.Shutdown(context.Background()); err != nil {
-			log.Fatal("error closing trace provider: ", err)
+		if err := tracerProvider.Shutdown(ctx); err != nil {
+			log.Fatalf("error closing trace provider: %v", err)
 		}
 	}
 }

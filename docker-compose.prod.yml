@@ -2,6 +2,7 @@ version: "3"
 
 services:
   service-a:
+    container_name: service-a
     build:
       context: .
       dockerfile: dockerfile.prod.input_server
@@ -9,15 +10,27 @@ services:
       - "3000:3000"
     environment:
       - SERVICE_URL=service-b
-      - ZIPKIN_URL=zipkin
+      - COLLECTOR_URL=collector
   service-b:
+    container_name: service-b
     build:
       context: .
       dockerfile: dockerfile.prod.temperature_server
     ports:
       - "8080:8080"
+    environment:
+      - COLLECTOR_URL=collector
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
     ports:
       - "9411:9411"
+  collector:
+    image: otel/opentelemetry-collector
+    container_name: collector
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"
+      - "55681:55679"
+    command: ["--config=/etc/otel-collector-config.yaml"]
