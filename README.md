@@ -25,15 +25,15 @@ To consult weather information through the command line, you can use `curl`, a p
 
 To make a query, simply replace CEP with the desired postal code in the URL. Here are some examples:
 
-bash
+```bash
 curl -X POST http://localhost:3000/ -H "Content-Type: application/json" -d '{"cep":"01001000"}'
-
+```
 
 Expected return:
 
-json
+```json
 {"city":"São Paulo","temp_C":22.4,"temp_F":72.32,"temp_K":295.55}
-
+```
 
 In this example, the request returns the temperature for the CEP 01001000 (a São Paulo CEP), showing the temperature in Celsius (temp_C), Fahrenheit (temp_F), and Kelvin (temp_K) and the city (city).
 
@@ -140,9 +140,9 @@ Before starting, make sure you have Docker and Docker Compose installed on your 
 
 First, clone the project repository to your local machine. Open a terminal and execute the command:
 
-bash
+```bash
 git clone https://github.com/aronkst/go-telemetry-cep-temperature.git
-
+```
 
 ### Navigate to the Project Directory
 
