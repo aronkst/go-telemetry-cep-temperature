@@ -1,178 +1,178 @@
 # Go Telemetry CEP Temperature
 
-## Visão Geral
+## Overview
 
-Este projeto consiste em uma solução integrada de dois serviços para o acesso a informações climáticas detalhadas, utilizando Códigos de Endereçamento Postal (CEPs) como parâmetro de consulta. O Serviço A permite a inserção do CEP através de uma requisição POST, com o corpo `{"cep":"01001000"}`, enquanto o Serviço B disponibiliza os dados climáticos por meio de uma requisição GET, acessível pela URL `/?cep=01001000`. Ao receber uma requisição, o Serviço A processa e redireciona a consulta ao Serviço B para obter as informações climáticas desejadas.
+This project consists of an integrated solution of two services for accessing detailed weather information, using Postal Addressing Codes (CEPs) as a query parameter. Service A allows the insertion of the CEP through a POST request, with the body `{"cep":"01001000"}`, while Service B provides the weather data through a GET request, accessible by the URL `/?cep=01001000`. Upon receiving a request, Service A processes and redirects the query to Service B to obtain the desired weather information.
 
-Este projeto é uma solução integrada composta por dois serviços, Serviço A e Serviço B, que oferece acesso a informações climáticas detalhadas, utilizando Códigos de Endereçamento Postal (CEPs) como parâmetro para consulta. Existe a implementação do OpenTelemetry (OTEL) em conjunto com o Zipkin para tracing distribuído, permitindo a visualização da jornada de uma requisição entre o Serviço A e o Serviço B. O Serviço A aceita um CEP via requisição POST, com o corpo `{"cep":"01001000"}`, e consulta o Serviço B, que disponibiliza os dados climáticos através de uma requisição GET na URL `/?cep=01001000`. A integração do OTEL com Zipkin facilita o monitoramento e a análise do tempo de resposta tanto para a busca de CEP quanto para a busca de informações climáticas.
+This project is an integrated solution composed of two services, Service A and Service B, which offers access to detailed weather information, using Postal Addressing Codes (CEPs) as a parameter for consultation. There is the implementation of OpenTelemetry (OTEL) in conjunction with Zipkin for distributed tracing, allowing the visualization of the journey of a request between Service A and Service B. Service A accepts a CEP via a POST request, with the body `{"cep":"01001000"}`, and consults Service B, which provides the weather data through a GET request at the URL `/?cep=01001000`. The integration of OTEL with Zipkin facilitates monitoring and analysis of the response time both for CEP search and for weather information search.
 
-## Características
+## Features
 
-- **Dois Serviços Integrados**: O projeto é composto por dois serviços distintos, o Serviço A, que recebe o CEP via POST, e o Serviço B, que fornece informações climáticas via GET, facilitando o acesso a dados precisos com base no CEP fornecido.
-- **Consulta Direta por CEP no Serviço B**: O Serviço B permite o acesso direto a informações climáticas específicas de uma localização, utilizando o CEP como chave de consulta.
-- **Validação Rigorosa de CEP no Serviço A**: O Serviço A implementa uma validação rigorosa do CEP inserido, assegurando que esteja no formato correto e consista apenas de números, com exatamente 8 caracteres, antes de redirecionar a consulta ao Serviço B.
-- **Autenticação Livre**: Ambos os serviços foram projetados para serem acessíveis sem a necessidade de autenticação, simplificando o processo de consulta às informações climáticas.
-- **Respostas em Formato JSON**: As informações climáticas são fornecidas em formato JSON pelo Serviço B, facilitando a integração com outras aplicações e a manipulação dos dados recebidos.
-- **Suporte a Múltiplas Unidades de Temperatura**: O Serviço B oferece informações de temperatura em Celsius, Fahrenheit e Kelvin, atendendo às diversas preferências e necessidades dos usuários.
-- **Integração com OTEL + Zipkin para Tracing Distribuído**: A implementação do OpenTelemetry juntamente com o Zipkin proporciona um tracing distribuído eficaz entre o Serviço A e o Serviço B.
-- **Spans para Medir Tempos de Resposta**: São criados spans específicos para medir o tempo de resposta das operações de busca de CEP no Serviço A e de busca de informações climáticas no Serviço B.
+- **Two Integrated Services**: The project consists of two distinct services, Service A, which receives the CEP via POST, and Service B, which provides weather information via GET, facilitating access to accurate data based on the provided CEP.
+- **Direct CEP Query in Service B**: Service B allows direct access to specific weather information of a location, using the CEP as a query key.
+- **Rigorous CEP Validation in Service A**: Service A implements rigorous validation of the entered CEP, ensuring it is in the correct format and consists only of numbers, with exactly 8 characters, before redirecting the query to Service B.
+- **Free Authentication**: Both services have been designed to be accessible without the need for authentication, simplifying the process of querying weather information.
+- **Responses in JSON Format**: Weather information is provided in JSON format by Service B, facilitating integration with other applications and the manipulation of the received data.
+- **Support for Multiple Temperature Units**: Service B offers temperature information in Celsius, Fahrenheit, and Kelvin, catering to the diverse preferences and needs of users.
+- **Integration with OTEL + Zipkin for Distributed Tracing**: The implementation of OpenTelemetry along with Zipkin provides effective distributed tracing between Service A and Service B.
+- **Spans to Measure Response Times**: Specific spans are created to measure the response time of CEP search operations in Service A and weather information search in Service B.
 
-## Exemplo de Uso
+## Usage Example
 
-Para consultar informações climáticas através da linha de comando, você pode usar o `curl`, uma ferramenta poderosa e disponível na maioria dos sistemas operacionais para fazer requisições HTTP. Abaixo estão exemplos práticos de como usar o curl para obter a temperatura com base em um CEP específico.
+To consult weather information through the command line, you can use `curl`, a powerful tool available on most operating systems for making HTTP requests. Below are practical examples of how to use curl to obtain the temperature based on a specific CEP.
 
-### Realizando uma Consulta
+### Performing a Query
 
-Para fazer uma consulta, simplesmente substitua CEP pelo código postal desejado na URL. Aqui estão alguns exemplos:
+To make a query, simply replace CEP with the desired postal code in the URL. Here are some examples:
 
-```bash
+bash
 curl -X POST http://localhost:3000/ -H "Content-Type: application/json" -d '{"cep":"01001000"}'
-```
 
-Retorno esperado:
 
-```json
+Expected return:
+
+json
 {"city":"São Paulo","temp_C":22.4,"temp_F":72.32,"temp_K":295.55}
-```
 
-Neste exemplo, a requisição retorna a temperatura para o CEP 01001000 (um CEP de São Paulo), mostrando a temperatura em Celsius (temp_C), Fahrenheit (temp_F), e Kelvin (temp_K) e a cidade (city).
 
-## Como os Dados são Retornados
+In this example, the request returns the temperature for the CEP 01001000 (a São Paulo CEP), showing the temperature in Celsius (temp_C), Fahrenheit (temp_F), and Kelvin (temp_K) and the city (city).
 
-Os dados são retornados em formato JSON. Cada campo no JSON representa uma medida diferente de temperatura:
+## How Data is Returned
 
-- `city`: Nome da cidade.
-- `temp_C`: Temperatura em graus Celsius.
-- `temp_F`: Temperatura em graus Fahrenheit.
-- `temp_K`: Temperatura em Kelvin.
+Data is returned in JSON format. Each field in the JSON represents a different temperature measure:
 
-## Desenvolvimento
+- `city`: Name of the city.
+- `temp_C`: Temperature in degrees Celsius.
+- `temp_F`: Temperature in degrees Fahrenheit.
+- `temp_K`: Temperature in Kelvin.
 
-No desenvolvimento deste projeto, foquei na criação de uma solução composta por dois serviços interconectados que utilizam APIs externas para fornecer informações climáticas precisas, baseadas em um Código de Endereçamento Postal (CEP) fornecido. O Serviço A é responsável por receber o CEP através de uma requisição POST e, em seguida, comunicar-se com o Serviço B, que executa as consultas às APIs externas e retorna os dados climáticos. Abaixo, descrevo as etapas envolvidas e como cada serviço e API são empregados, incluindo a implementação do OpenTelemetry (OTEL) e Zipkin para tracing distribuído.
+## Development
 
-### Busca de Endereço pelo CEP com viacep.com.br (Serviço B)
+In the development of this project, I focused on creating a solution composed of two interconnected services that use external APIs to provide accurate weather information, based on a Postal Addressing Code (CEP) provided. Service A is responsible for receiving the CEP through a POST request and then communicating with Service B, which performs the queries to the external APIs and returns the weather data. Below, I describe the steps involved and how each service and API are employed, including the implementation of OpenTelemetry (OTEL) and Zipkin for distributed tracing.
 
-A jornada começa quando o Serviço B coleta informações detalhadas sobre o endereço usando o CEP fornecido pelo Serviço A. Para isso, ele consulta a API do ViaCEP, que retorna dados como logradouro, bairro, cidade e estado. Estas informações são cruciais para identificar a localização geográfica precisa para as consultas climáticas subsequentes.
+### Address Search by CEP with viacep.com.br (Service B)
 
-### Busca de Longitude e Latitude com nominatim.openstreetmap.org (Serviço B)
+The journey begins when Service B collects detailed address information using the CEP provided by Service A. For this, it consults the ViaCEP API, which returns data such as street, neighborhood, city, and state. These details are crucial for identifying the precise geographical location for subsequent weather queries.
 
-Com os dados do endereço em mãos, o Serviço B então converte estas informações em coordenadas geográficas (latitude e longitude) através da API do Nominatim, que faz parte do projeto OpenStreetMap. Esta conversão é essencial para garantir a precisão das consultas climáticas que dependem de coordenadas geográficas.
+### Longitude and Latitude Search with nominatim.openstreetmap.org (Service B)
 
-### Busca de Temperatura (Serviço B)
+With the address data in hand, Service B then converts this information into geographical coordinates (latitude and longitude) through the Nominatim API, part of the OpenStreetMap project. This conversion is essential to ensure the accuracy of the weather queries that depend on geographical coordinates.
 
-Dispondo das coordenadas geográficas, o Serviço B realiza a consulta das condições climáticas atuais. Dependendo da disponibilidade dos dados, ele pode usar:
+### Temperature Search (Service B)
 
-- A API Open-Meteo, para consultas climáticas detalhadas baseadas em coordenadas, fornecendo informações precisas de temperatura para a localização especificada.
-- A API do wttr.in, para informações climáticas baseadas em nomes de localização, que embora possa não ser tão precisa quanto a consulta por coordenadas, ainda fornece uma estimativa válida das condições climáticas.
+With the geographical coordinates available, Service B performs the query for the current weather conditions. Depending on the availability of data, it can use:
 
-### Integração com OTEL + Zipkin
+- The Open-Meteo API, for detailed weather queries based on coordinates, providing accurate temperature information for the specified location.
+- The wttr.in API, for weather information based on location names, which although may not be as precise as the query by coordinates, still provides a valid estimate of the weather conditions.
 
-A integração com OpenTelemetry (OTEL) e Zipkin adiciona uma camada de observabilidade ao projeto, permitindo o tracing distribuído entre o Serviço A e o Serviço B. Esta funcionalidade possibilita a monitorização da jornada completa de uma requisição, incluindo a medição do tempo de resposta para a busca de CEP e a busca de temperatura, facilitando a identificação e a resolução de possíveis gargalos ou problemas de desempenho.
+### Integration with OTEL + Zipkin
 
-## Tratamentos de Erros
+The integration with OpenTelemetry (OTEL) and Zipkin adds a layer of observability to the project, allowing for distributed tracing between Service A and Service B. This functionality enables the monitoring of the complete journey of a request, including measuring the response time for CEP search and temperature search, facilitating the identification and resolution of possible bottlenecks or performance issues.
 
-Implementei tratamentos de erros em cada etapa para assegurar que o sistema possa lidar de forma adequada com cenários como CEPs inválidos, falhas na obtenção de coordenadas ou erros nas respostas das APIs.
+## Error Handling
 
-## Testes Unitários
+I implemented error handling at each stage to ensure that the system can appropriately handle scenarios such as invalid CEPs, failures in obtaining coordinates, or errors in API responses.
 
-Uma parte do desenvolvimento deste projeto envolve a implementação de testes unitários abrangentes, garantindo a confiabilidade e a robustez de cada funcionalidade oferecida pela aplicação. A abordagem adotada para os testes segue as melhores práticas de desenvolvimento de software, focando na validação de cada componente isoladamente para assegurar seu correto funcionamento em diversos cenários.
+## Unit Tests
 
-### Cobertura dos Testes
+A part of the development of this project involves the implementation of comprehensive unit tests, ensuring the reliability and robustness of each functionality offered by the application. The approach adopted for the tests follows best software development practices, focusing on validating each component in isolation to ensure its correct operation in various scenarios.
 
-Os testes unitários cobrem uma ampla gama de casos de uso e cenários de erro, incluindo, mas não se limitando a:
+### Test Coverage
 
-- Validação de CEPs: Testes para assegurar que apenas CEPs válidos e no formato correto são aceitos, e que as mensagens de erro adequadas são retornadas para CEPs inválidos ou formatados incorretamente.
-- Consulta a APIs Externas: Testes para verificar a interação correta com as APIs externas usadas para obter informações de endereço, coordenadas geográficas e dados climáticos. Isso inclui simular respostas das APIs para testar o manejo adequado de dados e erros.
-- Conversão de Unidades de Temperatura: Testes que validam a precisão das conversões de temperatura entre Celsius, Fahrenheit e Kelvin, garantindo que os cálculos estejam corretos.
-- Tratamento de Erros: Testes específicos para verificar a robustez do sistema ao enfrentar erros durante a consulta de informações, incluindo falhas de rede, erros nas APIs externas e dados inesperados.
+The unit tests cover a wide range of use cases and error scenarios, including, but not limited to:
+
+- CEP Validation: Tests to ensure that only valid CEPs in the correct format are accepted, and that appropriate error messages are returned for invalid or improperly formatted CEPs.
+- External API Queries: Tests to verify the correct interaction with the external APIs used to obtain address information, geographical coordinates, and weather data. This includes simulating API responses to test proper handling of data and errors.
+- Temperature Unit Conversion: Tests that validate the accuracy of temperature conversions between Celsius, Fahrenheit, and Kelvin, ensuring that the calculations are correct.
+- Error Handling: Specific tests to verify the system's robustness in facing errors during information querying, including network failures, errors in external APIs, and unexpected data.
 
 ## Makefile
 
-Este projeto inclui um Makefile projetado para oferecer uma interface eficiente e simplificada para o gerenciamento dos ambientes de desenvolvimento e produção, além da execução de testes automatizados. Os comandos disponibilizados permitem otimizar e agilizar o fluxo de trabalho de desenvolvimento, testes e manutenção do projeto, assegurando uma gestão mais eficaz e organizada.
+This project includes a Makefile designed to offer an efficient and simplified interface for managing development and production environments, as well as executing automated tests. The commands provided allow optimizing and streamlining the development workflow, testing, and project maintenance, ensuring a more effective and organized management.
 
-### Comandos de Desenvolvimento
+### Development Commands
 
 ### `make dev-start`
 
-Inicia os serviços definidos no arquivo `docker-compose.dev.yml` para o ambiente de desenvolvimento em modo detached (em segundo plano). Isso permite que os serviços rodem em background sem ocupar o terminal.
+Starts the services defined in the `docker-compose.dev.yml` file for the development environment in detached mode (in the background). This allows the services to run in the background without occupying the terminal.
 
 ### `make dev-stop`
 
-Interrompe os serviços que estão rodando em background para o ambiente de desenvolvimento. Isso não remove os containers, redes ou volumes criados pelo `docker compose up`.
+Stops the services that are running in the background for the development environment. This does not remove the containers, networks, or volumes created by `docker compose up`.
 
 ### `make dev-down`
 
-Desliga os serviços do ambiente de desenvolvimento e remove os containers, redes e volumes associados criados pelo `docker compose up`. Utilize este comando para limpar recursos após o desenvolvimento.
+Shuts down the development environment services and removes the containers, networks, and volumes associated created by `docker compose up`. Use this command to clean up resources after development.
 
 ### `dev-run-service-a`
 
-Inicia a execução do Serviço A dentro do ambiente de desenvolvimento, utilizando o Docker Compose para executar o comando `go run` no arquivo `/cmd/input_server/main.go`. Ele é ideal para iniciar rapidamente o servidor do projeto em modo de desenvolvimento.
+Starts the execution of Service A within the development environment, using Docker Compose to execute the `go run` command in the `/cmd/input_server/main.go` file. It is ideal for quickly starting the project server in development mode.
 
 ### `dev-run-service-b`
 
-Inicia a execução do Serviço B dentro do ambiente de desenvolvimento, utilizando o Docker Compose para executar o comando `go run` no arquivo `/cmd/temperature_server/main.go`. Ele é ideal para iniciar rapidamente o servidor do projeto em modo de desenvolvimento.
+Starts the execution of Service B within the development environment, using Docker Compose to execute the `go run` command in the `/cmd/temperature_server/main.go` file. It is ideal for quickly starting the project server in development mode.
 
 ### `make dev-run-tests`
 
-Executa todos os testes Go dentro do ambiente de desenvolvimento, mostrando detalhes verbosos de cada teste. Este comando é útil para rodar a suíte de testes do projeto e verificar se tudo está funcionando como esperado.
+Executes all Go tests within the development environment, showing verbose details of each test. This command is useful for running the project's test suite and checking if everything is functioning as expected.
 
-### Comandos de Produção
+### Production Commands
 
 ### `make prod-start`
 
-Inicia os serviços definidos no arquivo `docker-compose.prod.yml` para o ambiente de produção em modo detached. Isso é útil para rodar o projeto em um ambiente que simula a produção.
+Starts the services defined in the `docker-compose.prod.yml` file for the production environment in detached mode. This is useful for running the project in an environment that simulates production.
 
 ### `make prod-stop`
 
-Interrompe os serviços do ambiente de produção que estão rodando em background, sem remover os containers, redes ou volumes associados.
+Stops the production environment services that are running in the background, without removing the associated containers, networks, or volumes.
 
 ### `make prod-down`
 
-Desliga os serviços do ambiente de produção e remove os containers, redes e volumes associados, limpeza de recursos após o uso em produção.
+Shuts down the production environment services and removes the associated containers, networks, and volumes, cleaning up resources after use in production.
 
-## Pré-requisitos
+## Prerequisites
 
-Antes de começar, certifique-se de que você tem o Docker e o Docker Compose instalados em sua máquina. Caso não tenha, você pode baixar e instalar a partir dos seguintes links:
+Before starting, make sure you have Docker and Docker Compose installed on your machine. If not, you can download and install from the following links:
 
 - Docker: https://docs.docker.com/get-docker/
 
-### Clonar o Repositório
+### Clone the Repository
 
-Primeiro, clone o repositório do projeto para a sua máquina local. Abra um terminal e execute o comando:
+First, clone the project repository to your local machine. Open a terminal and execute the command:
 
-```bash
+bash
 git clone https://github.com/aronkst/go-telemetry-cep-temperature.git
-```
 
-### Navegar até o Diretório do Projeto
 
-Após clonar o repositório, navegue até o diretório do projeto utilizando o comando cd:
+### Navigate to the Project Directory
+
+After cloning the repository, navigate to the project directory using the cd command:
 
 ```bash
 cd go-telemetry-cep-temperature
 ```
 
-## Ambiente de Desenvolvimento
+## Development Environment
 
-### Construir o Projeto com Docker Compose
+### Build the Project with Docker Compose
 
-No diretório do projeto, execute o seguinte comando para construir e iniciar o projeto utilizando o Docker Compose:
+In the project directory, execute the following command to build and start the project using Docker Compose:
 
 ```bash
 docker compose -f docker-compose.dev.yml up --build
 ```
 
-Ou utilizando o Makefile:
+Or using the Makefile:
 
 ```bash
 make dev-start
 ```
 
-Este comando irá construir a imagem Docker do projeto e iniciar o container.
+This command will build the Docker image of the project and start the container.
 
-### Executar o Projeto com Docker Compose
+### Run the Project with Docker Compose
 
-Para iniciar o serviço principal do seu projeto em modo de desenvolvimento, você pode utilizar os comandos diretos do Docker Compose:
+To start the main service of your project in development mode, you can use the direct commands from Docker Compose:
 
 ```bash
 docker compose -f docker-compose.dev.yml exec dev go run cmd/input_server/main.go
@@ -182,7 +182,7 @@ docker compose -f docker-compose.dev.yml exec dev go run cmd/input_server/main.g
 docker compose -f docker-compose.dev.yml exec dev go run cmd/temperature_server/main.go
 ```
 
-Ou utilizando o Makefile:
+Or using the Makefile:
 
 ```bash
 make dev-run-service-a
@@ -192,90 +192,90 @@ make dev-run-service-a
 make dev-run-service-b
 ```
 
-### Acessar o Projeto
+### Access the Project
 
-Com o container rodando, você pode acessar o projeto através do navegador ou utilizando ferramentas como curl, apontando para http://localhost:3000/, substituindo CEP pelo código postal desejado.
+With the container running, you can access the project through the browser or using tools like curl, pointing to http://localhost:3000/, replacing CEP with the desired postal code.
 
-### Exemplo de Comando curl
+### curl Command Example
 
-Para testar se o projeto está rodando corretamente, você pode usar o seguinte comando curl em um novo terminal:
+To test if the project is running correctly, you can use the following curl command in a new terminal:
 
 ```bash
 curl -X POST http://localhost:3000/ -H "Content-Type: application/json" -d '{"cep":"01001000"}'
 ```
 
-Você deverá receber uma resposta em JSON com as temperaturas em Celsius, Fahrenheit, Kelvin e a cidade.
+You should receive a JSON response with temperatures in Celsius, Fahrenheit, Kelvin, and the city.
 
-### Visualizando a Telemetria
+### Visualizing Telemetry
 
-Abra um navegador e acesse http://localhost:9411/zipkin/. Essa URL levará você à interface de usuário do Zipkin, onde você pode começar a visualizar a telemetria dos seus serviços.
+Open a browser and access http://localhost:9411/zipkin/. This URL will take you to the Zipkin user interface, where you can start visualizing the telemetry of your services.
 
-1. **Pesquisar por Rastreamentos**: Na interface do Zipkin, você pode pesquisar rastreamentos de várias maneiras, como por serviço, nome da operação, anotações e tags.
+1. **Search for Traces**: In the Zipkin interface, you can search for traces in various ways, such as by service, operation name, annotations, and tags.
 
-2. **Analisar Rastreamentos**: Após encontrar um rastreamento específico, você pode clicar nele para ver os detalhes. Isso inclui informações como a duração do rastreamento.
+2. **Analyze Traces**: After finding a specific trace, you can click on it to see the details. This includes information like the duration of the trace.
 
-### Encerrando o Projeto
+### Ending the Project
 
-Para encerrar o projeto e parar o container do Docker, volte ao terminal onde o Docker Compose está rodando e pressione Ctrl+C. Para remover os containers criados pelo Docker Compose, execute:
+To end the project and stop the Docker container, go back to the terminal where Docker Compose is running and press Ctrl+C. To remove the containers created by Docker Compose, execute:
 
 ```bash
 docker compose -f docker-compose.dev.yml down
 ```
 
-Ou utilizando o Makefile:
+Or using the Makefile:
 
 ```bash
 make dev-down
 ```
 
-## Ambiente de Produção
+## Production Environment
 
-### Construir e Executar o Projeto com Docker Compose
+### Build and Run the Project with Docker Compose
 
-No diretório do projeto, execute o seguinte comando para construir e iniciar o projeto no ambiente de produção utilizando o Docker Compose:
+In the project directory, execute the following command to build and start the project in the production environment using Docker Compose:
 
 ```bash
 docker compose -f docker-compose.prod.yml up --build
 ```
 
-Ou utilizando o Makefile:
+Or using the Makefile:
 
 ```bash
 make prod-start
 ```
 
-Este comando irá construir a imagem Docker do projeto para produção e iniciar os containers.
+This command will build the Docker image of the project for production and start the containers.
 
-## Exemplo de Comando curl
+## curl Command Example
 
-Para verificar se o projeto em produção está operacional, utilize o seguinte comando curl, ajustando o endereço conforme sua configuração:
+To check if the production project is operational, use the following curl command, adjusting the address according to your configuration:
 
 ```bash
 curl -X POST http://localhost:3000/ -H "Content-Type: application/json" -d '{"cep":"01001000"}'
 ```
 
-Você deverá receber uma resposta em JSON com as informações solicitadas, como as temperaturas em Celsius, Fahrenheit, Kelvin e a cidade.
+You should receive a JSON response with the requested information, such as temperatures in Celsius, Fahrenheit, Kelvin, and the city.
 
-### Visualizando a Telemetria
+### Visualizing Telemetry
 
-Abra um navegador e acesse http://localhost:9411/zipkin/. Essa URL levará você à interface de usuário do Zipkin, onde você pode começar a visualizar a telemetria dos seus serviços.
+Open a browser and access http://localhost:9411/zipkin/. This URL will take you to the Zipkin user interface, where you can start visualizing the telemetry of your services.
 
-1. **Pesquisar por Rastreamentos**: Na interface do Zipkin, você pode pesquisar rastreamentos de várias maneiras, como por serviço, nome da operação, anotações e tags.
+1. **Search for Traces**: In the Zipkin interface, you can search for traces in various ways, such as by service, operation name, annotations, and tags.
 
-2. **Analisar Rastreamentos**: Após encontrar um rastreamento específico, você pode clicar nele para ver os detalhes. Isso inclui informações como a duração do rastreamento.
+2. **Analyze Traces**: After finding a specific trace, you can click on it to see the details. This includes information like the duration of the trace.
 
-### Encerrando o Projeto
+### Ending the Project
 
-Para encerrar o projeto e parar os containers de produção, utilize o seguinte comando:
+To end the project and stop the production containers, use the following command:
 
 ```bash
 docker compose -f docker-compose.prod.yml down
 ```
 
-Ou utilizando o Makefile:
+Or using the Makefile:
 
 ```bash
 make prod-down
 ```
 
-Este comando encerra todos os serviços de produção e remove os containers, redes e volumes associados, assegurando que o ambiente de produção seja limpo após o uso.
+This command ends all production services and removes the associated containers, networks, and volumes, ensuring that the production environment is cleaned up after use.
