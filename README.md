@@ -1,7 +1,5 @@
 # Go Telemetry CEP Temperature
 
-## Overview
-
 This project consists of an integrated solution of two services for accessing detailed weather information, using Postal Addressing Codes (CEPs) as a query parameter. Service A allows the insertion of the CEP through a POST request, with the body `{"cep":"01001000"}`, while Service B provides the weather data through a GET request, accessible by the URL `/?cep=01001000`. Upon receiving a request, Service A processes and redirects the query to Service B to obtain the desired weather information.
 
 This project is an integrated solution composed of two services, Service A and Service B, which offers access to detailed weather information, using Postal Addressing Codes (CEPs) as a parameter for consultation. There is the implementation of OpenTelemetry (OTEL) in conjunction with Zipkin for distributed tracing, allowing the visualization of the journey of a request between Service A and Service B. Service A accepts a CEP via a POST request, with the body `{"cep":"01001000"}`, and consults Service B, which provides the weather data through a GET request at the URL `/?cep=01001000`. The integration of OTEL with Zipkin facilitates monitoring and analysis of the response time both for CEP search and for weather information search.
